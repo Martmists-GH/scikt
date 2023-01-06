@@ -1,9 +1,8 @@
 package com.martmists.numkt.complex
 
-import kotlin.math.hypot
 import kotlin.math.roundToInt
 
-class Complex(val real: Double, val imag: Double = 0.0) : Number() {
+class Complex(val real: Double, val imag: Double = 0.0): Number() {
     // Type conversion
 
     override fun toByte(): Byte {
@@ -15,7 +14,7 @@ class Complex(val real: Double, val imag: Double = 0.0) : Number() {
     }
 
     override fun toDouble(): Double {
-        return hypot(real, imag)
+        return real
     }
 
     override fun toFloat(): Float {
@@ -58,19 +57,19 @@ class Complex(val real: Double, val imag: Double = 0.0) : Number() {
     // Basic operators
 
     operator fun plus(other: Number): Complex {
-        return if (other is Complex) {
-            Complex(real + other.real, imag + other.imag)
-        } else {
-            Complex(real + other.toDouble(), imag)
-        }
+        return Complex(real + other.toDouble(), imag)
+    }
+
+    operator fun plus(other: Complex): Complex {
+        return Complex(real + other.real, imag + other.imag)
     }
 
     operator fun minus(other: Number): Complex {
-        return if (other is Complex) {
-            Complex(real - other.real, imag - other.imag)
-        } else {
-            Complex(real - other.toDouble(), imag)
-        }
+        return Complex(real - other.toDouble(), imag)
+    }
+
+    operator fun minus(other: Complex): Complex {
+        return Complex(real - other.real, imag - other.imag)
     }
 
     operator fun unaryMinus(): Complex {
@@ -78,27 +77,28 @@ class Complex(val real: Double, val imag: Double = 0.0) : Number() {
     }
 
     operator fun times(other: Number): Complex {
-        return if (other is Complex) {
-            Complex(real * other.real - imag * other.imag, real * other.imag + imag * other.real)
-        } else {
-            Complex(real * other.toDouble(), imag * other.toDouble())
-        }
+        return Complex(real * other.toDouble(), imag * other.toDouble())
+    }
+
+    operator fun times(other: Complex): Complex {
+        return Complex(real * other.real - imag * other.imag, real * other.imag + imag * other.real)
     }
 
     operator fun div(other: Number): Complex {
-        return if (other is Complex) {
-            val denom = other.real * other.real + other.imag * other.imag
-            Complex((real * other.real + imag * other.imag) / denom, (imag * other.real - real * other.imag) / denom)
-        } else {
-            Complex(real / other.toDouble(), imag / other.toDouble())
-        }
+        return Complex(real / other.toDouble(), imag / other.toDouble())
+    }
+
+    operator fun div(other: Complex): Complex {
+        val denom = other.real * other.real + other.imag * other.imag
+        return Complex((real * other.real + imag * other.imag) / denom, (imag * other.real - real * other.imag) / denom)
     }
 
     operator fun rem(other: Number): Complex {
-        if (imag != 0.0 || (other is Complex && other.imag != 0.0)) {
-            throw UnsupportedOperationException("Complex numbers cannot be used in remainder operations")
-        }
-        return (real % other.toDouble()).toComplex()
+        return Complex(real % other.toDouble(), imag % other.toDouble())
+    }
+
+    operator fun rem(other: Complex): Complex {
+        return Complex(real % other.real, imag % other.imag)
     }
 
     fun conjugate(): Complex {

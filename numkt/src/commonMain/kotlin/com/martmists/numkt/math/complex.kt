@@ -14,7 +14,7 @@ import kotlin.math.sqrt
     Type(Any::class, "T"),  // parameters
     Type(Any::class, "T"),  // return type
 )
-internal fun angle(x: Complex): Complex = Complex(atan2(x.real, x.imag))
+internal fun angle(x: Complex): Complex = Complex(atan2(x.imag, x.real))
 
 @UnionMethod("angle")
 internal fun angle(x: NDArray): NDArray = x.transform(::angle)

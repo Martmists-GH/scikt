@@ -10,8 +10,8 @@ import kotlin.math.floor
 import kotlin.random.Random
 
 class NDArray(val shape: List<Int>, private val offset: Int = 0, strides: List<Int>? = null, data: Pair<DoubleArray, DoubleArray>? = null, initializer: ((Int) -> Number)? = null) {
-    constructor(vararg shape: Int) : this(shape.toList())
     constructor(vararg shape: Int, initializer: (Int) -> Number) : this(shape.toList(), initializer = initializer)
+    constructor(vararg shape: Int) : this(shape.toList())
 
     val strides = strides ?: let {
         val stride = mutableListOf<Int>()
@@ -94,7 +94,7 @@ class NDArray(val shape: List<Int>, private val offset: Int = 0, strides: List<I
     // Transforms
 
     fun copy(): NDArray {
-        return NDArray(shape) {
+        return NDArray(shape) { it: Int ->
             val idx = indices[it]
             real[offset + idx] j imag[offset + idx]
         }
@@ -156,9 +156,13 @@ class NDArray(val shape: List<Int>, private val offset: Int = 0, strides: List<I
 
         if (shape != other.shape) return false
         for ((i, j) in indices.zip(other.indices)) {
-            if (real[i + offset] != other.real[j + other.offset] || imag[i + offset] != other.imag[j + other.offset]) {
-                return false
-            }
+            val a = real[offset + i]
+            val b = real[other.offset + j]
+            val c = imag[offset + i]
+            val d = imag[other.offset + j]
+
+            if (a != b) return false
+            if (c != d) return false
         }
         return true
     }
@@ -400,8 +404,6 @@ class NDArray(val shape: List<Int>, private val offset: Int = 0, strides: List<I
     }
 
     companion object {
-        // Alternative construction methods
-
         fun zeros(vararg shape: Int) = NDArray(*shape) { 0 }
         fun zeros(shape: List<Int>) = NDArray(shape) { 0 }
         fun ones(vararg shape: Int) = NDArray(*shape) { 1 }
